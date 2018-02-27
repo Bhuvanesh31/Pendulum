@@ -18,6 +18,10 @@ rgba_colors[:,3] = np.linspace(0.,1.,100)
 theta = np.zeros(steps)
 theta_dot = np.zeros(steps)
 
+plt.plot(rgba_colors[-1000:0:-10,3])
+plt.show()
+
+
 plt.axis([0, steps*dt, -np.pi, np.pi])
 plt.ion()
 plt.show()
@@ -48,7 +52,7 @@ for i in range(steps):
         print(a, i)
         if i > 0:
             pts.remove()
-        pts = plt.scatter(time[a:i], theta[a:i], color=rgba_colors[-b:,:])
+        pts = plt.scatter(time[a:i:10], theta[a:i:10], color=rgba_colors[-b::10,:])
 
 
         plt.pause(0.0001)
