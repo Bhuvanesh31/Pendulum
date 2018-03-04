@@ -16,7 +16,7 @@ plot_length = int(1/dt) # number of time steps between first and last point in p
 plot_points = 20    # number of points in plot
 point_interval = plot_length//plot_points   # step interval between points in plot
 
- #----------- Initial Conditions ------------
+#----------- Initial Conditions ------------
 
 theta_c = np.pi/2+1 # IC for theta
 theta_dot_c = 0.0   # IC for theta_dot
@@ -26,7 +26,7 @@ theta_dot_c = 0.0   # IC for theta_dot
 time = np.arange(0,dt*steps,dt) # array of time points
 rgba_colors = np.zeros((plot_length,4)) # array for color used in plot
 rgba_colors[:,0] = 0.2
-rgba_colors[:,1] = 0.6
+rgba_colors[:,1] = 0.7
 rgba_colors[:,2] = 0.3
 rgba_colors[:,3] = np.linspace(0.,1.,plot_length)
 theta = np.zeros(steps) # theta at every time step
@@ -72,6 +72,7 @@ def RK4(DAEs, vals):
 
     results = vals + dt/6*(k[0]+2*k[1]+2*k[2]+k[3])
     return tuple(results)
+
 #----------- Execution ------------
 
 #plt.axis([0, steps*dt, -np.pi, np.pi]) # for theta / t plot
