@@ -55,6 +55,7 @@ plt.axis([-1.1*l_1, 1.1*l_1, -1.1*l_1, 1.1*l_1])
 plt.ion()
 plt.show()
 
+
 for i in range(steps):
     theta[i], theta_dot[i] = exp_Eul((DGL_single_theta, DGL_single_theta_dot), (theta_c, theta_dot_c))
     theta_c = theta[i]
@@ -70,5 +71,5 @@ for i in range(steps):
         #pts = plt.scatter(time[start:i:point_interval], theta[start:i:point_interval], color=rgba_colors[-(i-start)::point_interval,:])
         pts = plt.scatter(y[start:i:point_interval], x[start:i:point_interval], color=rgba_colors[-(i-start)::point_interval,:])
         bar = plt.plot((0,y[i-point_interval+1]),(0,x[i-point_interval+1]), color=rgba_colors[plot_length-1,:])
-
+        plt.scatter([0],[0], color=rgba_colors[-1,:])
         plt.pause(0.0001)
