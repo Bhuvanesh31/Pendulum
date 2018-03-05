@@ -6,8 +6,8 @@ import time as tm
 
 #----------- Constants and stuff ------------
 
-dt = 0.001 # size of time steps
-t_max = 10.  # maximum time
+dt = 0.01 # size of time steps
+t_max = 50.  # maximum time
 steps = int(t_max/dt)   # number of steps
 g = 9.81    # gravitational acceleration
 l1 = 1     # length of pendulum1
@@ -24,10 +24,10 @@ point_interval = plot_length//plot_points   # step interval between points in pl
 theta_c = np.pi/2+1 # IC for theta
 theta_dot_c = 0.0   # IC for theta_dot
 
-theta_1 = 0.3
-theta_2 = 0.
-p_1 = 0.
-p_2 = 0.
+theta_1 = 1.7   # IC for theta_1 of double pendulum
+theta_2 = -0.9  # IC for theta_2 of double pendulum
+p_1 = 0.4   # IC for p_1 of double pendulum
+p_2 = 1.5   # IC for p_2 of double pendulum
 
 #----------- Arrays ------------
 
@@ -42,10 +42,10 @@ theta_dot = np.zeros(steps) # theta_dot at every time step
 x = np.zeros(steps) # x-coordinate for every theta
 y = np.zeros(steps) # y-coordinate for every theta
 
-theta1 = np.zeros(steps)
-p1 = np.zeros(steps)
-theta2 = np.zeros(steps)
-p2 = np.zeros(steps)
+theta1_arr = np.zeros(steps)    # theta1 at every time step
+p1_arr = np.zeros(steps)    # p1 at every time step
+theta2_arr = np.zeros(steps)    # theta2 at every time step
+p2_arr = np.zeros(steps)    # p2 at every time step
 
 #----------- Functions ------------
 
@@ -146,13 +146,14 @@ for i in range(steps):
         plt.scatter([0],[0], color=rgba_colors[-1,:])   # draw pendulum mount
         plt.pause(0.0000001)
     '''
-    theta1[i], theta2[i], p1[i], p2[i] = RK4((DE_double_theta1, DE_double_theta2, DE_double_p1, DE_double_p2), (theta_1, theta_2, p_1, p_2))    # calculate next values
-    theta_1 = theta1[i]  # overwrite old values
-    theta_2 = theta2[i]
-    p_1 = p1[i]
-    p_2 = p2[i]
+    theta1_arr[i], theta2_arr[i], p1_arr[i], p2_arr[i] = RK4((DE_double_theta1, DE_double_theta2, DE_double_p1, DE_double_p2), (theta_1, theta_2, p_1, p_2))    # calculate next values
+    theta_1 = theta1_arr[i]  # overwrite old values
+    theta_2 = theta2_arr[i]
+    p_1 = p1_arr[i]
+    p_2 = p2_arr[i]
 
-plt.plot(theta1)
-plt.plot(theta2)
+plt.plot(time, theta1_arr)
+plt.plot(time, theta2_arr)
+plt.xlim(0,t_max)
 plt.show()
 #print("duration: ", tm.time()-timer_start)  # print duration of program run
