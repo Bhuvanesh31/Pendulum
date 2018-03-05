@@ -6,11 +6,14 @@ import time as tm
 
 #----------- Constants and stuff ------------
 
-dt = 0.0001 # size of time steps
-t_max = 10  # maximum time
+dt = 0.001 # size of time steps
+t_max = 10.  # maximum time
 steps = int(t_max/dt)   # number of steps
 g = 9.81    # gravitational acceleration
-l_1 = 1     # length of pendulum
+l1 = 1     # length of pendulum1
+l2 = 1     # length of pendulum2
+m1 = 1  # mass of pendulum1
+m2 = 1  # mass of pendulum2
 interval = .1/dt    # plot update interval
 plot_length = int(1/dt) # number of time steps between first and last point in plot
 plot_points = 20    # number of points in plot
@@ -20,6 +23,11 @@ point_interval = plot_length//plot_points   # step interval between points in pl
 
 theta_c = np.pi/2+1 # IC for theta
 theta_dot_c = 0.0   # IC for theta_dot
+
+theta_1 = 0.3
+theta_2 = 0.
+p_1 = 0.
+p_2 = 0.
 
 #----------- Arrays ------------
 
@@ -34,6 +42,11 @@ theta_dot = np.zeros(steps) # theta_dot at every time step
 x = np.zeros(steps) # x-coordinate for every theta
 y = np.zeros(steps) # y-coordinate for every theta
 
+theta1 = np.zeros(steps)
+p1 = np.zeros(steps)
+theta2 = np.zeros(steps)
+p2 = np.zeros(steps)
+
 #----------- Functions ------------
 
 def DE_single_theta(params):
@@ -44,7 +57,41 @@ def DE_single_theta(params):
 def DE_single_theta_dot(params):
     #Differential equation for theta_dot in a single pendulum
     theta = params[0]
-    return -g/l_1 * np.sin(theta)
+    return -g/l1 * np.sin(theta)
+
+def DE_double_theta1(params):
+    t1 = params[0]  # theta1
+    t2 = params[1]  # theta2
+    p1 = params[2]
+    p2 = params[3]
+    return (l2*p1-l1*p2*np.cos(t1-t2))/(l1**2*l2*(m1+m2*np.sin(t1-t2)**2))
+
+def DE_double_theta2(params):
+    t1 = params[0]  # theta1
+    t2 = params[1]  # theta2
+    p1 = params[2]
+    p2 = params[3]
+    return (l1*(m1+m2)*p2 - l2*m2*p1*np.cos(t1-t2))/(l1*l2**2*m2*(m1+m2*np.sin(t1-t2)**2))
+
+def DE_double_p1(params):
+        t1 = params[0]  # theta1
+        t2 = params[1]  # theta2
+        p1 = params[2]
+        p2 = params[3]
+        return -(m1+m2)*g*l1*np.sin(t1) - C1(t1, t2, p1, p2) + C2(t1, t2, p1, p2)
+
+def DE_double_p2(params):
+    t1 = params[0]  # theta1
+    t2 = params[1]  # theta2
+    p1 = params[2]
+    p2 = params[3]
+    return -m2*g*l2*np.sin(t2) + C1(t1, t2, p1, p2) - C2(t1, t2, p1, p2)
+
+def C1(t1, t2, p1, p2):
+    return (p1*p2*np.sin(t1-t2))/(l1*l2*(m1+m2*np.sin(t1-t2)**2))
+
+def C2(t1, t2, p1, p2):
+    return  (l2**2*m2*p1**2+l1**2*(m1+m2)*p2**2-l1*l2*m2*p1*p2*np.cos(t1-t2))/(2*l1**2*l2**2*(m1+m2*np.sin(t1-t2)**2)) * np.sin(2*(t1-t2))
 
 def exp_Eul(DAEs, vals):
     ''' Explicit-Euler solver for system of differential equations.
@@ -76,13 +123,13 @@ def RK4(DAEs, vals):
 #----------- Execution ------------
 
 #plt.axis([0, steps*dt, -np.pi, np.pi]) # for theta / t plot
-plt.axis([-1.1*l_1, 1.1*l_1, -1.1*l_1, 1.1*l_1])    # plot limits
-plt.ion()   # interactive plot
-plt.show()
+#plt.axis([-1.1*l_1, 1.1*l_1, -1.1*l_1, 1.1*l_1])    # plot limits
+#plt.ion()   # interactive plot
+#plt.show()
 
-timer_start = tm.time() # timer-start
+#timer_start = tm.time() # timer-start
 for i in range(steps):
-
+    '''
     theta[i], theta_dot[i] = RK4((DE_single_theta, DE_single_theta_dot), (theta_c, theta_dot_c))    # calculate next values
     theta_c = theta[i]  # overwrite old values
     theta_dot_c = theta_dot[i]
@@ -98,5 +145,14 @@ for i in range(steps):
         bar = plt.plot((0,y[i-point_interval+1]),(0,x[i-point_interval+1]), color=rgba_colors[plot_length-1,:]) # plot pendulum bar
         plt.scatter([0],[0], color=rgba_colors[-1,:])   # draw pendulum mount
         plt.pause(0.0000001)
+    '''
+    theta1[i], theta2[i], p1[i], p2[i] = RK4((DE_double_theta1, DE_double_theta2, DE_double_p1, DE_double_p2), (theta_1, theta_2, p_1, p_2))    # calculate next values
+    theta_1 = theta1[i]  # overwrite old values
+    theta_2 = theta2[i]
+    p_1 = p1[i]
+    p_2 = p2[i]
 
-print("duration: ", tm.time()-timer_start)  # print duration of program run
+plt.plot(theta1)
+plt.plot(theta2)
+plt.show()
+#print("duration: ", tm.time()-timer_start)  # print duration of program run
