@@ -1,3 +1,3 @@
 # Pendulum
 
-Simulation of a Multi-Pendulum in Python (only single so far...)
+Simulation of a double pendulum in Python
