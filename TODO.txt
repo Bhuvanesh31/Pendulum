@@ -1,0 +1,7 @@
+- Live plot for double pendulum
+- Save double pendulum to file
+- Create Video from file
+- Return Map and other phase space images
+- Multiple double pendulums
+- Triple pendulum?
+- Separate files for plotting and solving
